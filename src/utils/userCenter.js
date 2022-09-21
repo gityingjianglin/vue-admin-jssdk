@@ -2,7 +2,7 @@
  * @Author: yingjianglin
  * @Date: 2022-06-23 09:41:36
  * @LastEditors: yingjianglin
- * @LastEditTime: 2022-07-05 11:37:08
+ * @LastEditTime: 2022-09-21 13:52:19
  * @Description: 
  * 
  */
@@ -43,7 +43,7 @@ export const outLogin = (val) => {
       window.__USERCENTER__.configUserCenter({
         clientId: res.data.clientId,
         ssoUrl: res.data.ssoUrl,
-        appId: '',
+        appId: res.data.appId || '',
         tokenUrl: res.data.tokenUrl,
         // redirectUri: 'http://127.0.0.1:80'
       });
@@ -66,7 +66,7 @@ export const checkUserCenterLogin = () => {
       window.__USERCENTER__.configUserCenter({
         clientId: res.data.clientId,
         ssoUrl: res.data.ssoUrl,
-        appId: '',
+        appId: res.data.appId || '',
         tokenUrl: res.data.tokenUrl,
         // redirectUri: window.location.href
         // redirectUri: 'https://www.baidu.com'
