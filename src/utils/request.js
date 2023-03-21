@@ -1,13 +1,13 @@
 import axios from 'axios'
 import { Notification, MessageBox, Message } from 'element-ui'
 import store from '@/store'
-import { getToken } from '@/utils/auth'
+import { getToken, removeToken } from '@/utils/auth'
 import { tansParams } from "@/utils/ruoyi";
 import cache from '@/plugins/cache'
 import rootVue from '@/main'
 import { outLogin } from '@/utils/userCenter'
 import { checkUserCenterLogin } from '@/utils/userCenter'
-import { getStore, setStore } from '@/utils/storage'
+import { getStore, setStore, removeStore } from '@/utils/storage'
 
 let errorCode = {
   '401': '认证失败，无法访问系统资源',
@@ -90,25 +90,39 @@ service.interceptors.response.use(res => {
       return res.data
     }
     if (code === 401) {
-      if (!isRelogin.show) {
-        isRelogin.show = true;
-        MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
-          confirmButtonText: '重新登录',
-          cancelButtonText: '取消',
-          type: 'warning'
+      let isHaier = localStorage.getItem('client_userAgent')
+      if (isHaier === 'false') {
+        if (!isRelogin.show) {
+          isRelogin.show = true;
+          MessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
+              confirmButtonText: '重新登录',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }
+          ).then(() => {
+            isRelogin.show = false;
+            // outLogin()
+            store.dispatch('LogOut').then(() => {
+              checkUserCenterLogin()
+              // rootVue._router.push('/login')
+              // location.href = '/index';
+            })
+          }).catch(() => {
+            isRelogin.show = false;
+          });
         }
-      ).then(() => {
-        isRelogin.show = false;
-          // outLogin()
-        store.dispatch('LogOut').then(() => {
-          checkUserCenterLogin()
-          // rootVue._router.push('/login')
-          // location.href = '/index';
-        })
-      }).catch(() => {
-        isRelogin.show = false;
-      });
-    }
+      } else {
+        removeToken()
+        removeStore('haier-user-center-user-info')
+        removeStore('haier-user-center-access-token')
+        console.log('rootVue._router.history.pending.path')
+        console.log(rootVue._router.history.current)
+        if (rootVue._router.history.current && rootVue._router.history.current.path === '/') {
+          window.onload()
+        } else {
+          rootVue._router.push('/')
+        }
+      }
       return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
     } else if (code === 500) {
       Message({

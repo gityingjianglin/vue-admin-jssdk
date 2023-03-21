@@ -39,7 +39,7 @@
           <el-dropdown-item @click.native="setting = true">
             <span>布局设置</span>
           </el-dropdown-item>
-          <el-dropdown-item divided @click.native="logout">
+          <el-dropdown-item divided @click.native="logout" v-show="isHaier == 'false'">
             <span>退出登录</span>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -76,7 +76,8 @@ export default {
   },
   data () {
     return {
-      username: ''
+      username: '',
+      isHaier: ''
     }
   },
   computed: {
@@ -129,6 +130,7 @@ export default {
   mounted () {
     // this.username = Cookies.get("username")
     getStore(getKeyWithNamespace('nickName')) && this.$store.commit('SET_NAME',getStore(getKeyWithNamespace('nickName')))
+    this.isHaier = localStorage.getItem('client_userAgent')
   }
 }
 </script>

@@ -22,7 +22,7 @@
         <img :src="errGif"  alt="Girl has dropped her ice cream.">
         <p class="errorMsg">{{errMessage}}</p>
         <p>  如有疑问，请联系系统管理员！</p>
-        <el-button @click="replaceLogin" type="primary">重新登录</el-button>
+        <el-button @click="replaceLogin" type="primary" v-show="isHaier == 'false'">重新登录</el-button>
       </el-col>
     </el-row>
   </div>
@@ -36,7 +36,8 @@ export default {
   data() {
     return {
       errGif: errGif + '?' + +new Date(),
-      errMessage:''
+      errMessage:'',
+      isHaier: ''
     }
   },
   mounted(){
@@ -53,6 +54,9 @@ export default {
     replaceLogin () {
       outLogin()
     }
+  },
+  created () {
+    this.isHaier = localStorage.getItem('client_userAgent')
   }
 }
 </script>
